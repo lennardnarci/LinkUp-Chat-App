@@ -1,0 +1,6 @@
+@LinkUp_Chat_App.Server_HostAddress = http://localhost:5245
+
+GET {{LinkUp_Chat_App.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
