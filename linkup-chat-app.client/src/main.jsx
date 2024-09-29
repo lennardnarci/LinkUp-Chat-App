@@ -6,11 +6,17 @@ import "./index.css";
 import "./cssreset.css";
 import Root from "./routes/root.jsx";
 import ErrorPage from "./error-page";
+import Chat from "./routes/chat.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/chat",
+    element: <Chat />,
     errorElement: <ErrorPage />,
   },
 ]);

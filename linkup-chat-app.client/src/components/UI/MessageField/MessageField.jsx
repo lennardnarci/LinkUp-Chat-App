@@ -20,6 +20,9 @@ const MessageField = ({ roomName }) => {
         placeholder="Type something"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") handleSubmit();
+        }}
       />
       <button type="submit" id="submit-button" onClick={handleSubmit}>
         <p>Send</p>

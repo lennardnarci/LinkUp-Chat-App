@@ -17,7 +17,7 @@ const ChatRoom = () => {
 
   return (
     <>
-      <TopNav />
+      <TopNav roomName={roomName} />
       <ChatContainer />
       <MessageField roomName={roomName} />
     </>
