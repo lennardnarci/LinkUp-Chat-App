@@ -1,0 +1,31 @@
+import React, { useState } from "react";
+import "./MessageField.css";
+import { useChat } from "../../ChatProvider";
+
+const MessageField = ({ roomName }) => {
+  const [message, setMessage] = useState("");
+  const { sendMessage } = useChat();
+
+  const handleSubmit = () => {
+    sendMessage(roomName, "User", message);
+    setMessage("");
+  };
+
+  return (
+    <div className="message-container">
+      <input
+        type="text"
+        name="message"
+        id="message-field"
+        placeholder="Type something"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
+      <button type="submit" id="submit-button" onClick={handleSubmit}>
+        <p>Send</p>
+      </button>
+    </div>
+  );
+};
+
+export default MessageField;
