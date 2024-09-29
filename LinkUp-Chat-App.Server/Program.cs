@@ -1,3 +1,5 @@
+using LinkUp_Chat_App.Server.Hubs;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,10 +11,24 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSignalR();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllCorsPolicy", builder =>
+    {
+        builder
+            .WithOrigins("https://localhost:5173")     // Allow requests from this origin
+            .AllowAnyMethod()       // Allow any HTTP method (GET, POST, PUT, DELETE, etc.)
+            .AllowAnyHeader()       // Allow any headers
+            .AllowCredentials();    // Allow credentials (cookies, etc.) 
+    });
+});
+
 var app = builder.Build();
 
-app.UseDefaultFiles();
-app.UseStaticFiles();
+app.UseCors("AllowAllCorsPolicy");
+
+//app.UseDefaultFiles();
+//app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -28,5 +44,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
+
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

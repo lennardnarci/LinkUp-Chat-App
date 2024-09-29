@@ -1,0 +1,58 @@
+.top-nav-bar {
+  position: fixed;
+  top: 0;
+
+  width: 100%;
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4px;
+  gap: 6px;
+
+  min-width: 350px;
+  height: 64px;
+
+  background: #fef7ff;
+}
+
+.burger-icon {
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 10px;
+
+  margin: 0 auto;
+  height: 12px;
+}
+
+.burger-icon > path {
+  max-width: 18px;
+  height: 12px;
+}
+
+.top-nav-header {
+  margin: 0 auto;
+  width: 240px;
+  height: 20px;
+
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 20px;
+  /* identical to box height, or 91% */
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.1px;
+
+  color: #000000;
+}
+
+.settings-icon {
+  margin: 0 auto;
+}

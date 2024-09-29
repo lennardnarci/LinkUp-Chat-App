@@ -1,0 +1,78 @@
+.message-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+
+  background-color: rgba(217, 217, 217, 0.7);
+}
+
+#message-field {
+  margin: 0 auto;
+  width: 100%;
+
+  outline: none;
+
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12pt;
+  line-height: 20px;
+  /* identical to box height, or 167% */
+  letter-spacing: 0.1px;
+
+  color: rgba(0, 0, 0, 0.843);
+  background-color: rgba(217, 217, 217, 0.7);
+
+  border-style: none;
+  padding-left: 10px;
+}
+
+#message-field:focus,
+#message-field:hover {
+  outline: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  border-style: none;
+  background-color: rgba(217, 217, 217, 0.6);
+}
+
+#submit-button {
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 20px;
+
+  margin: 0 auto;
+  width: auto;
+  height: 40px;
+  outline: none;
+  border-style: none;
+
+  background-color: #0a9c93;
+}
+
+#submit-button:hover {
+  background-color: #14978f;
+}
+#submit-button:active {
+  padding: 2px 20px;
+}
+
+#submit-button > p {
+  /* M3/label/large */
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  /* identical to box height, or 143% */
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: 0.1px;
+  margin-top: 10px;
+
+  /* M3/sys/light/on-primary */
+  color: #ffffff;
+}
