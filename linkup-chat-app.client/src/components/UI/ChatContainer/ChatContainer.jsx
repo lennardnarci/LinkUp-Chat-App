@@ -1,22 +1,17 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./ChatContainer.css";
 import { useChat } from "../../ChatProvider";
+import ChatBubble from "../ChatBubble/ChatBubble";
 
-const ChatContainer = ({ roomName }) => {
-  const { messages, joinRoom } = useChat();
-
-  useEffect(() => {
-    joinRoom({ roomName });
-  }, []);
+const ChatContainer = () => {
+  const { messages } = useChat();
 
   return (
     <div className="chat-container">
       <div className="messages">
         {messages && messages.length > 0 ? (
           messages.map((msg, index) => (
-            <div key={index}>
-              <strong>{msg.user}</strong>: {msg.message}
-            </div>
+            <ChatBubble key={index} userName={msg.user} message={msg.message} />
           ))
         ) : (
           <p>No messages yet</p>
