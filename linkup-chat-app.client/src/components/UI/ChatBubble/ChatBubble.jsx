@@ -3,8 +3,9 @@ import "./ChatBubble.css";
 
 const ChatBubble = ({ userName, message }) => {
   return (
-    <div>
-      <strong>{userName}</strong>:{message}
+    <div className="chatbubble">
+      <p id="username">{userName}:</p>
+      <p id="message">{message}</p>
     </div>
   );
 };
