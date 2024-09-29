@@ -44,12 +44,17 @@ export const ChatProvider = ({ children }) => {
   };
 
   const joinRoom = async (roomName) => {
-    if (connection) {
+    if (
+      connection &&
+      connection.state === signalR.HubConnectionState.Connected
+    ) {
       try {
         await connection.invoke("JoinRoom", roomName);
       } catch (error) {
-        console.error("Failed to join room: ", error);
+        console.error("Failed to join room:", error);
       }
+    } else {
+      console.error("Connection is not established or still starting.");
     }
   };
 
@@ -57,6 +62,7 @@ export const ChatProvider = ({ children }) => {
     messages,
     sendMessage,
     joinRoom,
+    connection,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;

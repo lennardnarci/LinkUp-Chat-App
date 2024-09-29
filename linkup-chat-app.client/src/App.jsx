@@ -1,9 +1,5 @@
 import "./App.css";
-import React, { useState, useEffect } from "react";
-import { createSignalRContext } from "react-signalr/signalr";
-
-// Create a SignalR context
-const SignalRContext = createSignalRContext();
+import React, { useState } from "react";
 
 function App() {
   const [token, setToken] = useState("");
