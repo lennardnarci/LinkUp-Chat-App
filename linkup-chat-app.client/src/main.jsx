@@ -7,6 +7,7 @@ import "./cssreset.css";
 import Root from "./routes/root.jsx";
 import ErrorPage from "./error-page";
 import Chat from "./routes/chat.jsx";
+import ProtectedRoute from "./components/protectedroute.jsx";
 
 const router = createBrowserRouter([
   {
@@ -16,7 +17,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/chat",
-    element: <Chat />,
+    element: (
+      <ProtectedRoute>
+        <Chat />
+      </ProtectedRoute>
+    ),
     errorElement: <ErrorPage />,
   },
 ]);
