@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./MessageField.css";
-import { useChat } from "../../ChatProvider";
+import { useChat } from "../ChatProvider";
 
 const MessageField = ({ roomName }) => {
   const [message, setMessage] = useState("");

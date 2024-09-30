@@ -4,6 +4,9 @@
   flex-direction: row;
 
   background-color: rgba(217, 217, 217, 0.7);
+
+  position: fixed;
+  bottom: 0;
 }
 
 #message-field {
