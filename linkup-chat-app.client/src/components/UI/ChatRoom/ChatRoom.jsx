@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import ChatContainer from "./UI/ChatContainer/ChatContainer";
-import MessageField from "./UI/MessageField/MessageField";
-import TopNav from "./UI/TopNav/TopNav";
+import ChatContainer from "./ChatContainer/ChatContainer";
+import MessageField from "./MessageField/MessageField";
+import TopNav from "./TopNav/TopNav";
 import { useState } from "react";
 import { useChat } from "./ChatProvider";
 
@@ -17,7 +17,7 @@ const ChatRoom = () => {
 
   return (
     <>
-      <TopNav />
+      <TopNav roomName={roomName} />
       <ChatContainer />
       <MessageField roomName={roomName} />
     </>

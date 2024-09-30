@@ -48,6 +48,7 @@
   /* identical to box height, or 91% */
   display: flex;
   align-items: center;
+  justify-content: center;
   letter-spacing: 0.1px;
 
   color: #000000;

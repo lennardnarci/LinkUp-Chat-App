@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./MessageField.css";
-import { useChat } from "../../ChatProvider";
+import { useChat } from "../ChatProvider";
 
 const MessageField = ({ roomName }) => {
   const [message, setMessage] = useState("");
@@ -20,6 +20,9 @@ const MessageField = ({ roomName }) => {
         placeholder="Type something"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") handleSubmit();
+        }}
       />
       <button type="submit" id="submit-button" onClick={handleSubmit}>
         <p>Send</p>

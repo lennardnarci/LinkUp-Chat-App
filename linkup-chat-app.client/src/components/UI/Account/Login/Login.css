@@ -1,0 +1,147 @@
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+  gap: 48px;
+
+  height: 100vh;
+  width: 100vw;
+
+  background-color: #f2f2f2;
+}
+
+.logo {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 20px;
+  /* identical to box height, or 91% */
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: 0.1px;
+
+  color: #0a9c93;
+  padding: 25px;
+  gap: 10px;
+
+  width: 120px;
+  height: 36px;
+
+  border: 2px solid #0a9c93;
+  border-radius: 12px;
+}
+
+.username-input {
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 10px;
+}
+
+#login-username {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 200;
+  font-size: 22px;
+  line-height: 28px;
+  /* or 127% */
+  text-align: center;
+
+  color: #141e1a;
+}
+
+.text-field {
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 2px solid #d7e5df;
+  border-radius: 10px;
+  padding: 4px;
+  color: #141e1a;
+
+  /* InputField */
+
+  width: 368px;
+  max-width: 80vw;
+  height: 48px;
+}
+
+.text-field:focus,
+.text-field:active {
+  outline: 2px solid #0a9c93;
+}
+
+.password-input {
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 10px;
+}
+
+#login-password {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 200;
+  font-size: 22px;
+  line-height: 28px;
+  /* identical to box height, or 127% */
+  text-align: center;
+
+  color: #141e1a;
+}
+
+.login-btn {
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 8px;
+
+  background: #0a9c93;
+  border-radius: 10px;
+
+  width: 230px;
+  max-width: 80vw;
+  height: 40px;
+}
+
+.signup-btn {
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 8px;
+
+  background: #ffffff;
+  border: 1px solid #dde8e4;
+  border-radius: 10px;
+  color: #0a9c93;
+  text-decoration: none;
+
+  width: 230px;
+  max-width: 80vw;
+  height: 40px;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

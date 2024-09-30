@@ -1,6 +1,6 @@
 import React from "react";
 import "./ChatContainer.css";
-import { useChat } from "../../ChatProvider";
+import { useChat } from "../ChatProvider";
 import ChatBubble from "../ChatBubble/ChatBubble";
 
 const ChatContainer = () => {

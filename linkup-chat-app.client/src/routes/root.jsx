@@ -1,14 +1,10 @@
-import { ChatProvider } from "../components/ChatProvider";
-import ChatRoom from "../components/ChatRoom";
-
+import Login from "../components/UI/Account/Login/Login";
 
 export default function Root() {
   return (
     <>
       <div className="main">
-        <ChatProvider>
-          <ChatRoom />
-        </ChatProvider>
+        <Login />
       </div>
     </>
   );
