@@ -4,11 +4,9 @@ import ChatRoom from "../components/UI/ChatRoom/ChatRoom";
 export default function Chat() {
   return (
     <>
-      <div className="main">
-        <ChatProvider>
-          <ChatRoom />
-        </ChatProvider>
-      </div>
+      <ChatProvider>
+        <ChatRoom />
+      </ChatProvider>
     </>
   );
 }

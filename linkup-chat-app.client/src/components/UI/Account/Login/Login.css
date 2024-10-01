@@ -45,7 +45,7 @@
   gap: 10px;
 }
 
-#login-username {
+.text-field-header {
   font-family: "Roboto";
   font-style: normal;
   font-weight: 300;
@@ -87,19 +87,7 @@
   gap: 10px;
 }
 
-#login-password {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 300;
-  font-size: 22px;
-  line-height: 28px;
-  /* identical to box height, or 127% */
-  text-align: center;
-
-  color: #141e1a;
-}
-
-.login-btn {
+.btn-primary {
   /* Auto layout */
   display: flex;
   flex-direction: column;
@@ -116,7 +104,7 @@
   height: 40px;
 }
 
-.signup-btn {
+.btn-secondary {
   /* Auto layout */
   display: flex;
   flex-direction: column;
@@ -144,4 +132,9 @@ button:hover {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.slide {
+  opacity: 0;
+  display: none;
 }
