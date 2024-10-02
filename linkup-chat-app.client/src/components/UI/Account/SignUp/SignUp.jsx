@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./SignUp.css";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
 const SignUp = () => {
-  const [dots, setDots] = useState(["filled", "filled", "filled"]);
+  const [dots, setDots] = useState(["1", "2", "3"]);
   const [stage, setStage] = useState(1);
+  const prevStageRef = useRef(stage);
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -19,18 +20,25 @@ const SignUp = () => {
         opacity: 0,
         duration: 0.5,
         ease: "power1.inOut",
+        pointerEvents: "none",
         onComplete: () => {
           setStage(2);
           gsap.to(".email-input", {
-            display: "none",
+            position: "absolute",
           });
-          gsap.to(".username-input", {
-            x: "0%",
-            opacity: 1,
-            display: "flex",
-            duration: 0.5,
-            ease: "power1.inOut",
-          });
+          gsap.fromTo(
+            ".username-input",
+            { x: "100%", opacity: 0 },
+            {
+              x: "0%",
+              opacity: 1,
+              display: "flex",
+              duration: 0.5,
+              ease: "power1.inOut",
+              pointerEvents: "auto",
+              position: "relative",
+            }
+          );
           gsap.to(".btn-back", {
             opacity: 1,
           });
@@ -42,18 +50,25 @@ const SignUp = () => {
         opacity: 0,
         duration: 0.5,
         ease: "power1.inOut",
+        pointerEvents: "none",
         onComplete: () => {
           setStage(3);
           gsap.to(".username-input", {
-            display: "none",
+            position: "absolute",
           });
-          gsap.to(".password-input", {
-            x: "0%",
-            opacity: 1,
-            display: "flex",
-            duration: 0.5,
-            ease: "power1.inOut",
-          });
+          gsap.fromTo(
+            ".password-input",
+            { x: "100%", opacity: 0 },
+            {
+              x: "0%",
+              opacity: 1,
+              display: "flex",
+              duration: 0.5,
+              ease: "power1.inOut",
+              pointerEvents: "auto",
+              position: "relative",
+            }
+          );
         },
       });
     } else {
@@ -65,42 +80,54 @@ const SignUp = () => {
     if (stage === 3) {
       // Animate username input out and password input in
       gsap.to(".password-input", {
-        x: "0%",
+        x: "100%",
         opacity: 0,
         duration: 0.5,
         ease: "power1.inOut",
+        pointerEvents: "none",
         onComplete: () => {
           setStage(2);
           gsap.to(".password-input", {
-            display: "none",
+            position: "absolute",
           });
-          gsap.to(".username-input", {
-            x: "0%",
-            opacity: 1,
-            display: "flex",
-            duration: 0.5,
-            ease: "power1.inOut",
-          });
+          gsap.fromTo(
+            ".username-input",
+            { x: "-100%", opacity: 0, position: "absolute" },
+            {
+              x: `0%`,
+              opacity: 1,
+              duration: 0.5,
+              ease: "power1.inOut",
+              pointerEvents: "auto",
+              position: "relative",
+            }
+          );
         },
       });
     } else if (stage === 2) {
       gsap.to(".username-input", {
-        x: "0%",
+        x: "100%",
         opacity: 0,
         duration: 0.5,
         ease: "power1.inOut",
+        pointerEvents: "none",
         onComplete: () => {
           setStage(1);
           gsap.to(".username-input", {
-            display: "none",
+            position: "absolute",
           });
-          gsap.to(".email-input", {
-            x: "0%",
-            opacity: 1,
-            display: "flex",
-            duration: 0.5,
-            ease: "power1.inOut",
-          });
+          gsap.fromTo(
+            ".email-input",
+            { x: "-100%", opacity: 0 },
+            {
+              x: "0%",
+              opacity: 1,
+              duration: 0.5,
+              ease: "power1.inOut",
+              pointerEvents: "auto",
+              position: "relative",
+            }
+          );
           gsap.to(".btn-back", {
             opacity: 0,
           });
@@ -112,15 +139,24 @@ const SignUp = () => {
   //use GSAP to animate progress dots
   useGSAP(() => {
     gsap.from(".dot", { y: -40, opacity: 0, stagger: 0.1 });
-    gsap.from(".inner-dot-1", { width: 0 });
+    gsap.to(".inner-dot-1", { width: "100%" });
     gsap.from(".logo", { opacity: 0, duration: 1 });
   });
 
   useEffect(() => {
     setDots(dots.map((_, i) => (i < stage ? "filled" : "")));
-    if (stage > 1) {
-      gsap.from(`.inner-dot-${stage}`, { width: 0 });
+
+    const prevStage = prevStageRef.current;
+    console.log(stage);
+    console.log(prevStage);
+
+    if (prevStage <= stage) {
+      gsap.to(`.inner-dot-${stage}`, { width: "100%" });
+    } else {
+      gsap.to(`.inner-dot-${prevStage}`, { width: "0%" });
     }
+
+    prevStageRef.current = stage;
   }, [stage]);
 
   return (
@@ -128,9 +164,7 @@ const SignUp = () => {
       <span className="dots">
         {dots.map((dot, i) => (
           <span className="dot" key={i}>
-            <span
-              className={`inner-dot-${(i + 1).toString()} ${dot.toString()}`}
-            />
+            <span className={`inner-dot-${(i + 1).toString()}`} />
           </span>
         ))}
       </span>
