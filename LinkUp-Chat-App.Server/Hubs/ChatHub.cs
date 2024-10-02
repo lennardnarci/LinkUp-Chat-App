@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 
 namespace LinkUp_Chat_App.Server.Hubs
 {
+    [Authorize]
     public class ChatHub : Hub
     {
         private readonly ILogger<ChatHub> _logger;

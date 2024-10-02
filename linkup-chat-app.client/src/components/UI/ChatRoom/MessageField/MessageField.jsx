@@ -7,6 +7,7 @@ const MessageField = ({ roomName }) => {
   const { sendMessage } = useChat();
 
   const handleSubmit = () => {
+    if (message == null || message == "") return;
     sendMessage(roomName, "User", message);
     setMessage("");
   };

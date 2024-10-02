@@ -7,11 +7,21 @@ export const ChatProvider = ({ children }) => {
   const [connection, setConnection] = useState(null);
   const [messages, setMessages] = useState([]);
 
+  const token = localStorage.getItem("jwtToken"); // Retrieve the JWT token
+
+  if (!token) {
+    console.error("No authentication token found");
+    return;
+  }
+
   useEffect(() => {
     const connect = async () => {
       const newConnection = new signalR.HubConnectionBuilder()
-        .withUrl("https://localhost:7261/chatHub")
+        .withUrl("https://localhost:7261/chatHub", {
+          accessTokenFactory: () => token,
+        })
         .configureLogging(signalR.LogLevel.Information)
+        .withServerTimeout(60000)
         .build();
 
       newConnection.on("ReceiveMessage", (user, message) => {

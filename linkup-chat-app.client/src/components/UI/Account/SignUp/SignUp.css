@@ -1,0 +1,70 @@
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+  gap: 48px;
+
+  height: 100vh;
+  width: 100vw;
+
+  background-color: #f2f2f2;
+
+  overflow: hidden;
+  position: relative;
+}
+
+.dots {
+  position: fixed;
+  top: 4vh;
+  display: flex;
+  gap: 4px;
+}
+
+.dot {
+  position: relative;
+  display: block;
+  width: 1em;
+  height: 1em;
+  background-color: #ffffff;
+  border-radius: 50%;
+  border: 1px solid #dde8e4;
+}
+
+.dot > span {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: #0a9c93;
+  border-radius: 50%;
+  width: 0;
+}
+
+.inputs {
+  display: flex;
+}
+
+.email-input {
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 10px;
+}
+
+.slide {
+  opacity: 0;
+}
+
+.btn-back {
+  opacity: 0;
+}
+
+.btn-hide,
+.btn-hide:hover,
+.btn-hide:focus {
+  cursor: unset;
+}
