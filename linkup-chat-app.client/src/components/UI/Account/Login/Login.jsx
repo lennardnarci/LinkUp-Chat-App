@@ -24,18 +24,25 @@ const Login = () => {
         opacity: 0,
         duration: 0.5,
         ease: "power1.inOut",
+        pointerEvents: "none",
         onComplete: () => {
           setStage(2);
           gsap.to(".username-input", {
-            display: "none",
+            position: "absolute",
           });
-          gsap.to(".password-input", {
-            x: "0%",
-            opacity: 1,
-            display: "flex",
-            duration: 0.5,
-            ease: "power1.inOut",
-          });
+          gsap.fromTo(
+            ".password-input",
+            { x: "100%", opacity: 0 },
+            {
+              x: "0%",
+              opacity: 1,
+              display: "flex",
+              duration: 0.5,
+              ease: "power1.inOut",
+              pointerEvents: "auto",
+              position: "relative",
+            }
+          );
         },
       });
     } else {
@@ -43,8 +50,38 @@ const Login = () => {
     }
   };
 
+  const handleBack = () => {
+    if (stage === 2) {
+      // Animate username input out and password input in
+      gsap.to(".password-input", {
+        x: "100%",
+        opacity: 0,
+        duration: 0.5,
+        ease: "power1.inOut",
+        pointerEvents: "none",
+        onComplete: () => {
+          setStage(1);
+          gsap.to(".password-input", {
+            position: "absolute",
+          });
+          gsap.fromTo(
+            ".username-input",
+            { x: "-100%", opacity: 0, position: "absolute" },
+            {
+              x: `0%`,
+              opacity: 1,
+              duration: 0.5,
+              ease: "power1.inOut",
+              pointerEvents: "auto",
+              position: "relative",
+            }
+          );
+        },
+      });
+    }
+  };
+
   const login = async (event) => {
-    // Stoppa vanlig form från att köras
     console.log("signing in", { username, password });
     // Auth kod som kommunicerar med servern
     try {
@@ -69,15 +106,18 @@ const Login = () => {
       // Redirectar
       navigate("/chat");
     } catch (err) {
-      setError("Login failed. Please check your credentials and try again.");
+      setUsername("");
+      setPassword("");
+      handleBack();
+      setError(`Login failed: ${err.message}`);
       console.error("Error logging in: ", err);
     }
   };
 
   return (
     <form className="login-form">
-      <div className="logo">LinkUp</div>
       {error && <div className="error">{error}</div>}
+      <div className="logo">LinkUp</div>
       <div className="inputs">
         <div className="username-input">
           <p className="text-field-header">Username</p>

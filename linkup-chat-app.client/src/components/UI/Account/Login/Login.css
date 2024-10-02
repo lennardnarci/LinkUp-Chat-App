@@ -10,6 +10,9 @@
   width: 100vw;
 
   background-color: #f2f2f2;
+
+  overflow: hidden;
+  position: relative;
 }
 
 .logo {
@@ -139,4 +142,10 @@ button:hover {
 .slide {
   opacity: 0;
   display: none;
+}
+
+.error {
+  position: absolute;
+  color: red;
+  top: 10%;
 }
