@@ -3,7 +3,7 @@ import "./ChatContainer.css";
 import { useChat } from "../ChatProvider";
 import ChatBubble from "../ChatBubble/ChatBubble";
 
-const ChatContainer = () => {
+const ChatContainer = ({ loggedInUsername }) => {
   const { messages } = useChat();
 
   return (
@@ -11,7 +11,12 @@ const ChatContainer = () => {
       <div className="messages">
         {messages && messages.length > 0 ? (
           messages.map((msg, index) => (
-            <ChatBubble key={index} userName={msg.user} message={msg.message} />
+            <ChatBubble
+              key={index}
+              userName={msg.user}
+              message={msg.message}
+              loggedInUsername={loggedInUsername}
+            />
           ))
         ) : (
           <p>No messages yet</p>

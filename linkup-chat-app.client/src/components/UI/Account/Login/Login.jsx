@@ -127,6 +127,9 @@ const Login = () => {
             className="text-field"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleNext();
+            }}
           />
         </div>
         <div className="password-input slide">
@@ -137,6 +140,9 @@ const Login = () => {
             className="text-field"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleNext();
+            }}
           />
         </div>
       </div>

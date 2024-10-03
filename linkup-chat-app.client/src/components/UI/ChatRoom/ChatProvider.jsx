@@ -43,10 +43,10 @@ export const ChatProvider = ({ children }) => {
     };
   }, []);
 
-  const sendMessage = async (roomName, user, message) => {
+  const sendMessage = async (roomName, message) => {
     if (connection) {
       try {
-        await connection.invoke("SendMessage", roomName, user, message);
+        await connection.invoke("SendMessage", roomName, message);
       } catch (error) {
         console.error("Failed to send message: ", error);
       }

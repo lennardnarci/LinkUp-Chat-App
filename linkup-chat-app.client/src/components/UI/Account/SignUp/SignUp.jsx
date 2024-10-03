@@ -156,7 +156,7 @@ const SignUp = () => {
         const body = await response.json(); // Parse the JSON body to get the error message
         // Use the error message returned from the server or a default message
         console.log(body);
-        throw new Error(body.title || body.message || "Try again later.");
+        throw new Error(body.message || body.title || "Try again later.");
       }
       // Redirectar
       navigate("/login");
@@ -207,6 +207,9 @@ const SignUp = () => {
             className="text-field"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleNext();
+            }}
           />
         </div>
         <div className="username-input slide">
@@ -217,6 +220,9 @@ const SignUp = () => {
             className="text-field"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleNext();
+            }}
           />
         </div>
         <div className="password-input slide">
@@ -227,6 +233,9 @@ const SignUp = () => {
             className="text-field"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleNext();
+            }}
           />
         </div>
       </div>

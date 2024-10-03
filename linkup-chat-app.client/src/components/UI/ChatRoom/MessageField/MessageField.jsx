@@ -8,7 +8,7 @@ const MessageField = ({ roomName }) => {
 
   const handleSubmit = () => {
     if (message == null || message == "") return;
-    sendMessage(roomName, "User", message);
+    sendMessage(roomName, message);
     setMessage("");
   };
 
