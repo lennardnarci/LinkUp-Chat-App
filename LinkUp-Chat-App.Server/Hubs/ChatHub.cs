@@ -33,14 +33,14 @@ namespace LinkUp_Chat_App.Server.Hubs
         public async Task JoinRoom(string roomName)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
-            await Clients.Group(roomName).SendAsync("ReceiveMessage", "System", $"{Context.User?.Identity?.Name ?? "Unknown"} has joined the room {roomName}.");
+            await Clients.Group(roomName).SendAsync("ReceiveMessage", "System", $"{Context.User?.Identity?.Name ?? "Unknown"} has joined the room.");
         }
 
         // Leave a chat room
         public async Task LeaveRoom(string roomName)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomName);
-            await Clients.Group(roomName).SendAsync("ReceiveMessage", "System", $"{Context.User?.Identity?.Name ?? "Unknown"} has left the room {roomName}.");
+            await Clients.Group(roomName).SendAsync("ReceiveMessage", "System", $"{Context.User?.Identity?.Name ?? "Unknown"} has left the room.");
         }
 
         public async Task SendMessage(string roomName, string message)
