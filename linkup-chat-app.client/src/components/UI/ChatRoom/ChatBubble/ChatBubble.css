@@ -7,15 +7,11 @@
   padding: 16px 16px 16px 14px;
   gap: 14px;
 
-  width: 334px; 
+  width: 334px;
 
   background: #d9d9d9;
   border-radius: 16px;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 1;
-  flex-grow: 0;
+  scroll-margin-bottom: 100px;
 }
 
 #username {
@@ -44,4 +40,9 @@
   letter-spacing: 0.1px;
 
   color: #000000;
+}
+
+.self {
+  background: #0a9c9298;
+  align-self: flex-end;
 }

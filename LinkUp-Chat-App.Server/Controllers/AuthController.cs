@@ -1,4 +1,7 @@
-﻿using LinkUp_Chat_App.Server.Models;
+﻿using LinkUp_Chat_App.Server.Data;
+using LinkUp_Chat_App.Server.Data.Interfaces;
+using LinkUp_Chat_App.Server.Data.Repos;
+using LinkUp_Chat_App.Server.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -13,20 +16,29 @@ namespace LinkUp_Chat_App.Server.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly IUserRepo _userRepo;
+
+        public AuthController(IUserRepo userRepo)
+        {
+            _userRepo = userRepo;
+        }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] Credentials credentials)
+        public async Task<IActionResult> Login([FromBody] Credentials credentials)
         {
             //Check if credentials received are null or empty
             if (credentials == null || string.IsNullOrEmpty(credentials.Username) || string.IsNullOrEmpty(credentials.Password))
             {
-                return BadRequest("Username or password cannot be empty.");
+                return BadRequest(new { message = "Username or password cannot be empty." });
             }
 
+            //Use repo to check if credentials match
+            User? existingUser = await _userRepo.ValidateCredentialsAsync(credentials.Username, credentials.Password);
+
             //Validate user credentials
-            if (credentials.Username != "test" && credentials.Password != "test")
+            if (existingUser == null)
             {
-                return Unauthorized();
+                return Unauthorized(new { message = "Invalid username or password." });
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -35,6 +47,8 @@ namespace LinkUp_Chat_App.Server.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[]
             {
+                //Add user id and username to JWT
+                new Claim(ClaimTypes.NameIdentifier, existingUser.Id.ToString()),
                 new Claim(ClaimTypes.Name, credentials.Username)
             }),
                 Expires = DateTime.UtcNow.AddHours(1),
@@ -44,6 +58,40 @@ namespace LinkUp_Chat_App.Server.Controllers
             var tokenString = tokenHandler.WriteToken(token);
 
             return Ok(new { token = tokenString });
+        }
+
+        [HttpPost("signup")]
+        public async Task<IActionResult> SignUp([FromBody] Credentials credentials)
+        {
+            //Check if input is valid
+            if (!ModelState.IsValid || credentials.Email.IsNullOrEmpty())
+            {
+                return BadRequest(new { message = "Fields cannot be empty" });
+            }
+
+            //Check if user exists
+            if (await _userRepo.CheckIfUserExistAsync(credentials.Username))
+            {
+                return Conflict(new { message = "A user with this username already exist." });
+            }
+
+            User user = new User();
+            user.Email = credentials.Email;
+            user.Username = credentials.Username;
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(credentials.Password);
+
+
+            try
+            {
+                await _userRepo.CreateUserAsync(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while creating the user.", error = ex.Message });
+            }
+
+
+            return Created();
         }
     }
 }

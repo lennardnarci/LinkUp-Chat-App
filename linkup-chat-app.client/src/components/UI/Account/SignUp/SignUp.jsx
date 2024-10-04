@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./SignUp.css";
+import { Link, useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
@@ -7,6 +8,8 @@ const SignUp = () => {
   const [dots, setDots] = useState(["1", "2", "3"]);
   const [stage, setStage] = useState(1);
   const prevStageRef = useRef(stage);
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -73,6 +76,7 @@ const SignUp = () => {
       });
     } else {
       //Sign up functionality #TODO
+      signup();
     }
   };
 
@@ -136,6 +140,32 @@ const SignUp = () => {
     }
   };
 
+  const signup = async () => {
+    console.log("signing up", { username, password });
+    // Auth kod som kommunicerar med servern
+    try {
+      const response = await fetch("https://localhost:7261/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, username, password }),
+      });
+
+      if (!response.ok) {
+        const body = await response.json(); // Parse the JSON body to get the error message
+        // Use the error message returned from the server or a default message
+        console.log(body);
+        throw new Error(body.message || body.title || "Try again later.");
+      }
+      // Redirectar
+      navigate("/login");
+    } catch (err) {
+      setError(`${err.message}`);
+      console.error("Error signin up: ", err);
+    }
+  };
+
   //use GSAP to animate progress dots
   useGSAP(() => {
     gsap.from(".dot", { y: -40, opacity: 0, stagger: 0.1 });
@@ -147,8 +177,6 @@ const SignUp = () => {
     setDots(dots.map((_, i) => (i < stage ? "filled" : "")));
 
     const prevStage = prevStageRef.current;
-    console.log(stage);
-    console.log(prevStage);
 
     if (prevStage <= stage) {
       gsap.to(`.inner-dot-${stage}`, { width: "100%" });
@@ -168,6 +196,7 @@ const SignUp = () => {
           </span>
         ))}
       </span>
+      {error && <div className="error">{error}</div>}
       <div className="logo">LinkUp</div>
       <div className="inputs">
         <div className="email-input">
@@ -178,6 +207,9 @@ const SignUp = () => {
             className="text-field"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleNext();
+            }}
           />
         </div>
         <div className="username-input slide">
@@ -188,6 +220,9 @@ const SignUp = () => {
             className="text-field"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleNext();
+            }}
           />
         </div>
         <div className="password-input slide">
@@ -198,6 +233,9 @@ const SignUp = () => {
             className="text-field"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleNext();
+            }}
           />
         </div>
       </div>

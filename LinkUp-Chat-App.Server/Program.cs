@@ -1,5 +1,9 @@
+using LinkUp_Chat_App.Server.Data;
+using LinkUp_Chat_App.Server.Data.Interfaces;
+using LinkUp_Chat_App.Server.Data.Repos;
 using LinkUp_Chat_App.Server.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -14,6 +18,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<UsersContext>(
+    options => options.UseSqlServer(@"Data Source=.;Initial Catalog=LinkUpDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;")
+);
+
+//Add SignalR
 
 builder.Services.AddSignalR();
 
@@ -67,6 +77,8 @@ builder.Services.AddAuthentication(options =>
         }
     };
 });
+
+builder.Services.AddTransient<IUserRepo, UserRepo>();
 
 var app = builder.Build();
 
