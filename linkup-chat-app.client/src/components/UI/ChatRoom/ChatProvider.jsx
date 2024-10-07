@@ -53,6 +53,14 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
+  const createRoom = async (roomName) => {
+    try {
+      await connection.invoke("CreateRoom", roomName);
+    } catch (error) {
+      console.error("Error creating room:", error);
+    }
+  };
+
   const joinRoom = async (roomName) => {
     if (
       connection &&
@@ -71,6 +79,7 @@ export const ChatProvider = ({ children }) => {
   const value = {
     messages,
     sendMessage,
+    createRoom,
     joinRoom,
     connection,
   };

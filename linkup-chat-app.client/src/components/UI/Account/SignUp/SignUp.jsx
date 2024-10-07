@@ -197,7 +197,9 @@ const SignUp = () => {
         ))}
       </span>
       {error && <div className="error">{error}</div>}
-      <div className="logo">LinkUp</div>
+      <Link to={"/"}>
+        <div className="logo">LinkUp</div>
+      </Link>
       <div className="inputs">
         <div className="email-input">
           <p className="text-field-header">Enter your email:</p>

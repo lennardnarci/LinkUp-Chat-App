@@ -68,3 +68,7 @@
 .btn-hide:focus {
   cursor: unset;
 }
+
+a {
+  text-decoration: none;
+}

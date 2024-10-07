@@ -37,7 +37,7 @@ namespace LinkUp_Chat_App.Server.Data.Repos
             return true;
         }
 
-        public async Task<User?> GetUserByIdAsync(int id)
+        public async Task<User?> GetUserByIdAsync(Guid id)
         {
             return await _context.Users.FindAsync(id);
         }

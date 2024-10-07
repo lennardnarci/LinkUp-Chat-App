@@ -9,6 +9,7 @@ import ErrorPage from "./error-page";
 import Chat from "./routes/chat.jsx";
 import ProtectedRoute from "./components/protectedroute.jsx";
 import LoginPage from "./routes/loginPage.jsx";
+import SignupPage from "./routes/signupPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,11 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <LoginPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/signup",
+    element: <SignupPage />,
     errorElement: <ErrorPage />,
   },
 ]);

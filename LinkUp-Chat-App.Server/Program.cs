@@ -4,6 +4,7 @@ using LinkUp_Chat_App.Server.Data.Repos;
 using LinkUp_Chat_App.Server.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -20,8 +21,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<UsersContext>(
-    options => options.UseSqlServer(@"Data Source=.;Initial Catalog=LinkUpDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;")
+    //options => options.UseSqlServer("Server=chat.mikaelmykha.dev;Port=3306;Database=LinkUpDB;Uid=MikaelMykha;Pwd=Mikhl20092009!")
+    options => options.UseMySql("Server=chat.mikaelmykha.dev;Port=3306;Database=LinkUpDB;Uid=MikaelMykha;Pwd=Mikhl20092009!",
+        new MySqlServerVersion(new Version(8, 0, 39)))
+    
 );
+
 
 //Add SignalR
 
@@ -31,7 +36,7 @@ builder.Services.AddSignalR();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllCorsPolicy", builder =>
+    options.AddPolicy("AllowCorsPolicy", builder =>
     {
         builder
             .WithOrigins("https://localhost:5173")     // Allow requests from this origin
@@ -79,10 +84,11 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddTransient<IUserRepo, UserRepo>();
+builder.Services.AddTransient<IChatRepo, ChatRepo>();
 
 var app = builder.Build();
 
-app.UseCors("AllowAllCorsPolicy");
+app.UseCors("AllowCorsPolicy");
 
 //app.UseDefaultFiles();
 //app.UseStaticFiles();
@@ -101,7 +107,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapFallbackToFile("/index.html");
+//app.MapFallbackToFile("/index.html");
 
 app.MapHub<ChatHub>("/chatHub");
 

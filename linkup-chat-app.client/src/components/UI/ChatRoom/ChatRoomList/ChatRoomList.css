@@ -1,0 +1,94 @@
+.chatroom-list {
+  color: #000000;
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0px;
+
+  width: 100vw;
+  height: 88vh;
+}
+
+.chatrooms {
+  width: 100%;
+  height: 100%;
+}
+
+.chatroom {
+  background-color: #d9d9d9;
+
+  /* ChatRoomBubble */
+
+  box-sizing: border-box;
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 15px;
+  gap: 14px;
+
+  background: #d9d9d9;
+  border-bottom: 1px solid rgba(37, 39, 47, 0.15);
+  border-radius: 0px;
+
+  cursor: pointer;
+}
+
+.chatroom:hover,
+.chatroom:focus {
+  background-color: #bdbdbd;
+}
+
+.room-img {
+  width: 8vh;
+  height: 8vh;
+  border-radius: 50%;
+  background-color: #aabad6;
+  margin: 4px;
+}
+
+.mid {
+  width: 60vw;
+}
+
+.roomname {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 20px;
+  /* identical to box height, or 91% */
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.1px;
+}
+
+.latest-message {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  /* identical to box height, or 125% */
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.1px;
+}
+
+.timestamp {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 20px;
+  /* or 167% */
+  text-align: center;
+  letter-spacing: 0.1px;
+
+  align-self: flex-start;
+  padding-top: 4%;
+}
