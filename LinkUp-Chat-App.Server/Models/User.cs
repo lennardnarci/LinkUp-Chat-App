@@ -15,6 +15,8 @@ namespace LinkUp_Chat_App.Server.Models
         public string Username { get; set; } = string.Empty;
         [Required]
         public string PasswordHash { get; set; } = string.Empty;
-        
+
+        public List<UserChatRoom> UserChatRooms { get; set; } = new List<UserChatRoom>();
+
     }
 }

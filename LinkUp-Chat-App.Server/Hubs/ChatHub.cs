@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using LinkUp_Chat_App.Server.Data.Interfaces;
+using LinkUp_Chat_App.Server.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace LinkUp_Chat_App.Server.Hubs
 {
@@ -7,20 +10,65 @@ namespace LinkUp_Chat_App.Server.Hubs
     public class ChatHub : Hub
     {
         private readonly ILogger<ChatHub> _logger;
+        private readonly IChatRepo _chatRepo;
+        private readonly IUserRepo _userRepo;
 
-        public ChatHub(ILogger<ChatHub> logger)
+        public ChatHub(ILogger<ChatHub> logger, IChatRepo chatRepo, IUserRepo userRepo)
         {
             _logger = logger;
+            _chatRepo = chatRepo;
+            _userRepo = userRepo;
         }
 
         public override async Task OnConnectedAsync()
         {
+            var username = Context.User?.Identity?.Name;
+            if (!string.IsNullOrEmpty(username))
+            {
+                // Get the user from the repository
+                if (!Guid.TryParse(Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                {
+                    throw new Exception("Cannot parse user id. OnConnect");
+                }
+                var user = await _userRepo.GetUserByIdAsync(userId);
+                if (user != null)
+                {
+                    // Retrieve the user's rooms from the database
+                    var userChatRooms = await _chatRepo.GetUserRoomsAsync(user.Id);
+                    foreach (var chatRoom in userChatRooms)
+                    {
+                        // Add the user to the group for each room they belong to
+                        await Groups.AddToGroupAsync(Context.ConnectionId, chatRoom.Name);
+                    }
+                }
+            }
             Console.WriteLine($"Client connected: {Context.ConnectionId}");
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            var username = Context.User?.Identity?.Name;
+            if (!string.IsNullOrEmpty(username))
+            {
+                // Get the user from the repository
+                if (!Guid.TryParse(Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                {
+                    throw new Exception("Cannot parse user id. OnDisconnect");
+                }
+                var user = await _userRepo.GetUserByIdAsync(userId);
+                if (user != null)
+                {
+                    // Retrieve the user's rooms from the database
+                    var userChatRooms = await _chatRepo.GetUserRoomsAsync(user.Id);
+                    foreach (var chatRoom in userChatRooms)
+                    {
+                        //Notify the chatroom on disconnect
+                        //await Clients.Group(chatRoom.Name)
+                        //    .SendAsync("ReceiveMessage", "System", $"{username} has disconnected.");
+                    }
+                }
+            }
             Console.WriteLine($"Client disconnected: {Context.ConnectionId}");
             if (exception != null)
             {
@@ -29,11 +77,78 @@ namespace LinkUp_Chat_App.Server.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
+        //Create a chatroom
+        public async Task CreateRoom(string roomName)
+        {
+            if (string.IsNullOrEmpty(roomName))
+            {
+                throw new ArgumentException("Room name is required.");
+            }
+
+            await _chatRepo.CreateRoomAsync(roomName);
+        }
+
         //Join a chatroom
         public async Task JoinRoom(string roomName)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
-            await Clients.Group(roomName).SendAsync("ReceiveMessage", "System", $"{Context.User?.Identity?.Name ?? "Unknown"} has joined the room.");
+            //Get the user from the userrepo
+            var username = Context.User?.Identity?.Name;
+            if (!Guid.TryParse(Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+            {
+                throw new Exception("Cannot parse user id. JoinRoom.");
+            }
+
+            var user = await _userRepo.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+
+            //Get the room from the chatrepo
+            var room = await _chatRepo.GetRoomByNameAsync(roomName);
+            if (room == null)
+            {
+                throw new Exception("Room not found.");
+            }
+
+            //If user is not already in room
+            var userIsInRoom = await _chatRepo.UserIsInRoomAsync(user.Id, room.Id);
+            if (!userIsInRoom)
+            {
+                // Add the user to the room
+                await _chatRepo.AddUserToRoomAsync(user.Id, room.Id);
+
+                // Notify all clients in the room that a user has joined
+                await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
+                await Clients.Group(roomName).SendAsync("ReceiveMessage", "System", $"{username} has joined the room.");
+            }
+            else
+            {
+                await Clients.Caller.SendAsync("ReceiveMessage", "System", $"{username}, you are already in this room.");
+            }
+        }
+
+        //Create a chatroom
+        public async Task GetRooms()
+        {
+            var username = Context.User?.Identity?.Name;
+            if (!string.IsNullOrEmpty(username))
+            {
+                // Get the user from the repository
+                if (!Guid.TryParse(Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                {
+                    throw new Exception("Cannot parse user id. OnConnect");
+                }
+                var user = await _userRepo.GetUserByIdAsync(userId);
+                if (user != null)
+                {
+                    // Retrieve the user's rooms from the database
+                    var userChatRooms = await _chatRepo.GetUserRoomsAsync(user.Id);
+                    
+                    //Send all the rooms the user is in to the client
+                    await Clients.Caller.SendAsync("ReceiveRooms", userChatRooms);
+                }
+            }
         }
 
         // Leave a chat room

@@ -6,6 +6,7 @@ const ChatContext = createContext();
 export const ChatProvider = ({ children }) => {
   const [connection, setConnection] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [rooms, setRooms] = useState([]);
 
   const token = localStorage.getItem("jwtToken"); // Retrieve the JWT token
 
@@ -29,6 +30,11 @@ export const ChatProvider = ({ children }) => {
         setMessages((prevMessages) => [...prevMessages, { user, message }]);
       });
 
+      newConnection.on("ReceiveRooms", (roomsArray) => {
+        console.log("Rooms received from server:", roomsArray);
+        setRooms(roomsArray);
+      });
+
       await newConnection.start();
       setConnection(newConnection);
     };
@@ -38,6 +44,7 @@ export const ChatProvider = ({ children }) => {
     return () => {
       if (connection) {
         connection.off("ReceiveMessage");
+        connection.off("ReceiveRooms");
         connection.stop();
       }
     };
@@ -50,6 +57,14 @@ export const ChatProvider = ({ children }) => {
       } catch (error) {
         console.error("Failed to send message: ", error);
       }
+    }
+  };
+
+  const createRoom = async (roomName) => {
+    try {
+      await connection.invoke("CreateRoom", roomName);
+    } catch (error) {
+      console.error("Error creating room:", error);
     }
   };
 
@@ -68,10 +83,28 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
+  const getRooms = async () => {
+    if (
+      connection &&
+      connection.state === signalR.HubConnectionState.Connected
+    ) {
+      try {
+        await connection.invoke("getRooms");
+      } catch (error) {
+        console.error("Error getting rooms:", error);
+      }
+    } else {
+      console.error("Connection is not established or still starting.");
+    }
+  };
+
   const value = {
     messages,
+    rooms,
     sendMessage,
+    createRoom,
     joinRoom,
+    getRooms,
     connection,
   };
 

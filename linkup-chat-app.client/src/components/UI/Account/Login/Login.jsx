@@ -41,6 +41,9 @@ const Login = () => {
               ease: "power1.inOut",
               pointerEvents: "auto",
               position: "relative",
+              onComplete: () => {
+                document.querySelectorAll(".text-field")[1].focus();
+              },
             }
           );
         },

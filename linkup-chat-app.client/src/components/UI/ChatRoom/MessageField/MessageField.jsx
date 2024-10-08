@@ -19,7 +19,7 @@ const MessageField = ({ roomName }) => {
         name="message"
         id="message-field"
         placeholder="Type something"
-        autocomplete="off"
+        autoComplete="off"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={(e) => {

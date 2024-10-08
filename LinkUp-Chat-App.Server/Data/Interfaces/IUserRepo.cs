@@ -6,7 +6,7 @@ namespace LinkUp_Chat_App.Server.Data.Interfaces
     {
         Task<bool> CreateUserAsync(User user);
         Task<bool> DeleteUserAsync(string username);
-        Task<User?> GetUserByIdAsync(int id);
+        Task<User?> GetUserByIdAsync(Guid id);
         Task<bool> CheckIfUserExistAsync(string username);
         Task<bool> UpdateUserAsync(User user);
         Task<User?> ValidateCredentialsAsync(string username, string password);

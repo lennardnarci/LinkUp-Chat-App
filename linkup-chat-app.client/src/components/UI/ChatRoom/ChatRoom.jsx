@@ -7,8 +7,8 @@ import { useChat } from "./ChatProvider";
 import { jwtDecode } from "jwt-decode";
 
 const ChatRoom = () => {
-  const { joinRoom, connection } = useChat();
-  const [roomName, setRoomName] = useState("Wag12");
+  const { joinRoom, connection, createRoom } = useChat();
+  const [roomName, setRoomName] = useState("Public Room");
   const token = localStorage.getItem("jwtToken");
   let loggedInUsername = "";
 

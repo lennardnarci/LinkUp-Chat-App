@@ -40,6 +40,9 @@ const SignUp = () => {
               ease: "power1.inOut",
               pointerEvents: "auto",
               position: "relative",
+              onComplete: () => {
+                document.querySelectorAll(".text-field")[1].focus();
+              },
             }
           );
           gsap.to(".btn-back", {
@@ -70,6 +73,9 @@ const SignUp = () => {
               ease: "power1.inOut",
               pointerEvents: "auto",
               position: "relative",
+              onComplete: () => {
+                document.querySelectorAll(".text-field")[2].focus();
+              },
             }
           );
         },
@@ -104,6 +110,9 @@ const SignUp = () => {
               ease: "power1.inOut",
               pointerEvents: "auto",
               position: "relative",
+              onComplete: () => {
+                document.querySelectorAll(".text-field")[1].focus();
+              },
             }
           );
         },
@@ -130,6 +139,9 @@ const SignUp = () => {
               ease: "power1.inOut",
               pointerEvents: "auto",
               position: "relative",
+              onComplete: () => {
+                document.querySelectorAll(".text-field")[0].focus();
+              },
             }
           );
           gsap.to(".btn-back", {
@@ -197,7 +209,9 @@ const SignUp = () => {
         ))}
       </span>
       {error && <div className="error">{error}</div>}
-      <div className="logo">LinkUp</div>
+      <Link to={"/"}>
+        <div className="logo">LinkUp</div>
+      </Link>
       <div className="inputs">
         <div className="email-input">
           <p className="text-field-header">Enter your email:</p>
