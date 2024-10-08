@@ -128,6 +128,29 @@ namespace LinkUp_Chat_App.Server.Hubs
             }
         }
 
+        //Create a chatroom
+        public async Task GetRooms()
+        {
+            var username = Context.User?.Identity?.Name;
+            if (!string.IsNullOrEmpty(username))
+            {
+                // Get the user from the repository
+                if (!Guid.TryParse(Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                {
+                    throw new Exception("Cannot parse user id. OnConnect");
+                }
+                var user = await _userRepo.GetUserByIdAsync(userId);
+                if (user != null)
+                {
+                    // Retrieve the user's rooms from the database
+                    var userChatRooms = await _chatRepo.GetUserRoomsAsync(user.Id);
+                    
+                    //Send all the rooms the user is in to the client
+                    await Clients.Caller.SendAsync("ReceiveRooms", userChatRooms);
+                }
+            }
+        }
+
         // Leave a chat room
         public async Task LeaveRoom(string roomName)
         {
