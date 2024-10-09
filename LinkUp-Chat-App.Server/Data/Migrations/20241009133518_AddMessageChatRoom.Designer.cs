@@ -4,16 +4,19 @@ using LinkUp_Chat_App.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace LinkUp_Chat_App.Server.data.migrations
+namespace LinkUp_Chat_App.Server.Data.Migrations
 {
     [DbContext(typeof(UsersContext))]
-    partial class UsersContextModelSnapshot : ModelSnapshot
+    [Migration("20241009133518_AddMessageChatRoom")]
+    partial class AddMessageChatRoom
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -20,6 +20,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Add connection to database
 builder.Services.AddDbContext<UsersContext>(
     //options => options.UseSqlServer("Server=chat.mikaelmykha.dev;Port=3306;Database=LinkUpDB;Uid=MikaelMykha;Pwd=Mikhl20092009!")
     options => options.UseMySql("Server=chat.mikaelmykha.dev;Port=3306;Database=LinkUpDB;Uid=MikaelMykha;Pwd=Mikhl20092009!",
@@ -90,8 +91,8 @@ var app = builder.Build();
 
 app.UseCors("AllowCorsPolicy");
 
-//app.UseDefaultFiles();
-//app.UseStaticFiles();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -107,7 +108,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-//app.MapFallbackToFile("/index.html");
+app.MapFallbackToFile("/index.html");
 
 app.MapHub<ChatHub>("/chatHub");
 
