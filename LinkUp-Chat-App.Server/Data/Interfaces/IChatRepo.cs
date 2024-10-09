@@ -11,5 +11,8 @@ namespace LinkUp_Chat_App.Server.Data.Interfaces
         Task<bool> UserIsInRoomAsync(Guid userId, Guid roomId);
         Task AddUserToRoomAsync(Guid userId, Guid roomId);
         Task<IEnumerable<ChatRoom>> GetUserRoomsAsync(Guid userId);
+
+        Task SaveMessageAsync(Message message);
+        Task<List<Message>> GetMessagesAsync(ChatRoom room);
     }
 }

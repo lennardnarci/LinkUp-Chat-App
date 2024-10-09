@@ -76,6 +76,22 @@ namespace LinkUp_Chat_App.Server.Data.Repos
         {
             return await _context.ChatRooms.FirstOrDefaultAsync(cr => cr.Name == roomName);
         }
+
+        public async Task SaveMessageAsync(Message message)
+        {
+            await _context.Messages.AddAsync(message);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Message>> GetMessagesAsync(ChatRoom room)
+        {
+            return await _context.Messages
+                .Where(m => m.ChatRoom == room)
+                .OrderBy(m => m.Date)
+                .Include(m => m.User)
+                .Take(50)
+                .ToListAsync();
+        }
     }
 }
 

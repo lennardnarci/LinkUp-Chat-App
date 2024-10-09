@@ -12,5 +12,6 @@ namespace LinkUp_Chat_App.Server.Models
         public User User { get; set; }
         [Required]
         public string MessageText { get; set; }
+        public ChatRoom ChatRoom { get; set; }
     }
 }
