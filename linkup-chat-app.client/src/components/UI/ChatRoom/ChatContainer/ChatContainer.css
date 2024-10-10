@@ -9,7 +9,6 @@
   margin-top: 64px;
   margin-bottom: 150px;
 
-  width: 100vw;
   height: 88vh;
   overflow: hidden;
 
@@ -38,6 +37,8 @@
   overflow: scroll;
   padding: 24px 0px;
   padding-bottom: 12vh;
+
+  color: #000;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

@@ -1,0 +1,35 @@
+.chatroom-layout {
+  display: flex;
+  height: 100vh;
+}
+
+.chatroom-list {
+  width: 25vw; /* Adjust width */
+  border-right: 1px solid #ccc;
+  overflow-y: auto;
+}
+
+.chat-container-layout {
+  width: 75vw;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.join-create-layout {
+  width: 75vw;
+}
+
+@media (max-width: 1024px) {
+  .chatroom-layout {
+    display: block;
+  }
+
+  .chatroom-list {
+    width: 100%;
+  }
+
+  .chat-container-layout {
+    width: 100%;
+  }
+}

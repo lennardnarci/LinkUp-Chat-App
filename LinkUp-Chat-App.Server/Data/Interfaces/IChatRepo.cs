@@ -14,5 +14,6 @@ namespace LinkUp_Chat_App.Server.Data.Interfaces
 
         Task SaveMessageAsync(Message message);
         Task<List<Message>> GetMessagesAsync(ChatRoom room);
+        Task<Message?> GetLatestMessageAsync(Guid roomId);
     }
 }

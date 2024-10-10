@@ -7,7 +7,7 @@
   align-items: center;
   padding: 10px 0px;
 
-  width: 100vw;
+  width: 75vw;
   height: 88vh;
 
   margin-top: 56px;
@@ -46,11 +46,12 @@
 }
 
 .room-img {
-  width: 8vh;
-  height: 8vh;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background-color: #aabad6;
   margin: 4px;
+  flex-shrink: 0;
 }
 
 .mid {

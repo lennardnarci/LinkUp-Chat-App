@@ -1,6 +1,6 @@
 ﻿namespace LinkUp_Chat_App.Server.Models
 {
-    //Flera till flera koppling i databasen. Kopplar användare till chatrum.
+    //Många till många koppling i databasen. Kopplar användare till chatrum.
     public class UserChatRoom
     {
         public Guid UserId { get; set; }

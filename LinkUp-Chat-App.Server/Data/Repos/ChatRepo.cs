@@ -92,6 +92,14 @@ namespace LinkUp_Chat_App.Server.Data.Repos
                 .Take(50)
                 .ToListAsync();
         }
+
+        public async Task<Message?> GetLatestMessageAsync(Guid roomId)
+        {
+            return await _context.Messages
+                .Where(m => m.ChatRoom.Id == roomId)
+                .OrderByDescending(m => m.Date)
+                .FirstOrDefaultAsync();
+        }
     }
 }
 
