@@ -86,7 +86,21 @@ namespace LinkUp_Chat_App.Server.Controllers
             try
             {
                 await _userRepo.CreateUserAsync(user);
-                await _chatRepo.AddUserToRoomAsync(user.Id, Guid.Parse("08dce668-c336-49f0-8995-9e697bc1a858"));
+
+                //Adds the user to the default public room
+                var defaultRoom = await _chatRepo.GetRoomByNameAsync("Public Room");
+                if (defaultRoom == null)
+                {
+                    await _chatRepo.CreateRoomAsync("Public Room");
+                    var room = await _chatRepo.GetRoomByNameAsync("Public Room");
+                    await _chatRepo.AddUserToRoomAsync(user.Id, room.Id);
+                }
+                else
+                {
+                    await _chatRepo.AddUserToRoomAsync(user.Id, defaultRoom.Id);
+                }
+
+                
             }
             catch (Exception ex)
             {

@@ -3,6 +3,7 @@ using LinkUp_Chat_App.Server.Models;
 using LinkUp_Chat_App.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 
 namespace LinkUp_Chat_App.Server.Hubs
@@ -32,6 +33,7 @@ namespace LinkUp_Chat_App.Server.Hubs
                     if (!Guid.TryParse(Context.User?.FindFirst(ClaimTypes.NameIdentifier)?
                                                                 .Value, out Guid userId))
                     {
+                        _logger.LogError("Cannot parse user id. OnConnect");
                         throw new Exception("Cannot parse user id. OnConnect");
                     }
                     var user = await _userRepo.GetUserByIdAsync(userId);
@@ -82,29 +84,6 @@ namespace LinkUp_Chat_App.Server.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var username = Context.User?.Identity?.Name;
-            if (!string.IsNullOrEmpty(username))
-            {
-                // Get the user from the repository
-                if (!Guid.TryParse(Context.User?.FindFirst(ClaimTypes.NameIdentifier)?
-                                                            .Value, out Guid userId))
-                {
-                    throw new Exception("Cannot parse user id. OnDisconnect");
-                }
-                var user = await _userRepo.GetUserByIdAsync(userId);
-                if (user != null)
-                {
-                    // Retrieve the user's rooms from the database
-                    var userChatRooms = await _chatRepo.GetUserRoomsAsync(user.Id);
-                    foreach (var chatRoom in userChatRooms)
-                    {
-                        //Notify the chatroom on disconnect
-                        //await Clients.Group(chatRoom.Name)
-                        //    .SendAsync("ReceiveMessage", "System",
-                        //              $"{username} has disconnected.");
-                    }
-                }
-            }
             Console.WriteLine($"Client disconnected: {Context.ConnectionId}");
             if (exception != null)
             {
@@ -277,7 +256,7 @@ namespace LinkUp_Chat_App.Server.Hubs
             await Clients.Group(roomName).SendAsync("ReceiveMessage",
                                                     room.Name,
                                                     Context.User?.Identity?.Name ?? "Unknown", 
-                                                    chatMessage.MessageText,
+                                                    message,
                                                     chatMessage.Date);
         }
 

@@ -71,7 +71,7 @@ export const ChatProvider = ({ children }) => {
   const sendMessage = async (roomName, message) => {
     if (connection) {
       try {
-        await connection.invoke("SendMessage", roomName, message, );
+        await connection.invoke("SendMessage", roomName, message);
       } catch (error) {
         console.error("Failed to send message: ", error);
       }
@@ -83,6 +83,7 @@ export const ChatProvider = ({ children }) => {
       await connection.invoke("CreateRoom", roomName);
     } catch (error) {
       console.error("Error creating room:", error);
+      throw error;
     }
   };
 
@@ -95,9 +96,14 @@ export const ChatProvider = ({ children }) => {
         await connection.invoke("JoinRoom", roomName);
       } catch (error) {
         console.error("Failed to join room:", error);
+        throw error;
       }
     } else {
-      console.error("Connection is not established or still starting.");
+      const connectionError = new Error(
+        "Connection is not established or still starting."
+      );
+      console.error(connectionError.message);
+      throw connectionError;
     }
   };
 

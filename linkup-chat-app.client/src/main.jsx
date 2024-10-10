@@ -14,7 +14,7 @@ import SignupPage from "./routes/signupPage.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: <LoginPage />,
     errorElement: <ErrorPage />,
   },
   {

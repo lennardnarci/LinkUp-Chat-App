@@ -8,7 +8,7 @@ const JoinCreate = () => {
   const [roomName, setRoomName] = useState("");
   const { joinRoom, createRoom, switchRoom } = useChat();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!roomName) {
       setError("Please enter a room name.");
       return;
@@ -16,16 +16,28 @@ const JoinCreate = () => {
 
     if (mode === "Create") {
       // Handle room creation
-      createRoom(roomName);
-      console.log("Creating room:", roomName);
-      joinRoom(roomName);
-      console.log("Joining room:", roomName);
-      switchRoom(roomName);
+      try {
+        await createRoom(roomName); // This will throw an error if the room create fails
+        console.log("Creating room:", roomName);
+
+        await joinRoom(roomName); // This will throw an error if the room join fails
+        console.log("Joining room:", roomName);
+
+        switchRoom(roomName); // Only called if joinRoom is successful
+      } catch (err) {
+        setError("Error while creating room, try again later.");
+        console.error("Error creating room:", err);
+      }
     } else if (mode === "Join") {
       // Handle room joining
-      joinRoom(roomName);
-      console.log("Joining room:", roomName);
-      switchRoom(roomName);
+      try {
+        await joinRoom(roomName);
+        console.log("Joining room:", roomName);
+        switchRoom(roomName);
+      } catch (err) {
+        setError("Room does not exist.");
+        console.error("Error joining room:", err);
+      }
     }
 
     // Reset the input after handling

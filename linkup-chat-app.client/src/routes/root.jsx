@@ -6,9 +6,6 @@ export default function Root() {
   return (
     <>
       <div className="main">
-        <ChatProvider>
-          <JoinCreate />
-        </ChatProvider>
       </div>
     </>
   );
