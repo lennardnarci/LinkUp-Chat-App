@@ -4,7 +4,7 @@ import { useChat } from "../ChatProvider";
 
 const MessageField = ({ roomName }) => {
   const [message, setMessage] = useState("");
-  const { sendMessage } = useChat();
+  const { currentRoom, sendMessage } = useChat();
 
   const handleSubmit = () => {
     if (message == null || message == "") return;
@@ -13,23 +13,27 @@ const MessageField = ({ roomName }) => {
   };
 
   return (
-    <div className="message-container">
-      <input
-        type="text"
-        name="message"
-        id="message-field"
-        placeholder="Type something"
-        autoComplete="off"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") handleSubmit();
-        }}
-      />
-      <button type="submit" id="submit-button" onClick={handleSubmit}>
-        <p>Send</p>
-      </button>
-    </div>
+    <>
+      {currentRoom && (
+        <div className="message-container">
+          <input
+            type="text"
+            name="message"
+            id="message-field"
+            placeholder="Type something"
+            autoComplete="off"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSubmit();
+            }}
+          />
+          <button type="submit" id="submit-button" onClick={handleSubmit}>
+            <p>Send</p>
+          </button>
+        </div>
+      )}
+    </>
   );
 };
 

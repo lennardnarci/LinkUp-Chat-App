@@ -22,10 +22,7 @@ builder.Services.AddSwaggerGen();
 
 //Add connection to database
 builder.Services.AddDbContext<UsersContext>(
-    //options => options.UseSqlServer("Server=chat.mikaelmykha.dev;Port=3306;Database=LinkUpDB;Uid=MikaelMykha;Pwd=Mikhl20092009!")
-    options => options.UseMySql("Server=chat.mikaelmykha.dev;Port=3306;Database=LinkUpDB;Uid=MikaelMykha;Pwd=Mikhl20092009!",
-        new MySqlServerVersion(new Version(8, 0, 39)))
-    
+    options => options.UseSqlServer("Data Source=.;Initial Catalog=LinkUpDB;Integrated Security=True;Trust Server Certificate=True")
 );
 
 

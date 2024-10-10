@@ -17,10 +17,12 @@ namespace LinkUp_Chat_App.Server.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserRepo _userRepo;
+        private readonly IChatRepo _chatRepo;
 
-        public AuthController(IUserRepo userRepo)
+        public AuthController(IUserRepo userRepo, IChatRepo chatRepo)
         {
             _userRepo = userRepo;
+            _chatRepo = chatRepo;
         }
 
         [HttpPost("login")]
@@ -84,6 +86,21 @@ namespace LinkUp_Chat_App.Server.Controllers
             try
             {
                 await _userRepo.CreateUserAsync(user);
+
+                //Adds the user to the default public room
+                var defaultRoom = await _chatRepo.GetRoomByNameAsync("Public Room");
+                if (defaultRoom == null)
+                {
+                    await _chatRepo.CreateRoomAsync("Public Room");
+                    var room = await _chatRepo.GetRoomByNameAsync("Public Room");
+                    await _chatRepo.AddUserToRoomAsync(user.Id, room.Id);
+                }
+                else
+                {
+                    await _chatRepo.AddUserToRoomAsync(user.Id, defaultRoom.Id);
+                }
+
+                
             }
             catch (Exception ex)
             {

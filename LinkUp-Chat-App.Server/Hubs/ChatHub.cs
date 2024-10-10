@@ -3,6 +3,7 @@ using LinkUp_Chat_App.Server.Models;
 using LinkUp_Chat_App.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 
 namespace LinkUp_Chat_App.Server.Hubs
@@ -32,6 +33,7 @@ namespace LinkUp_Chat_App.Server.Hubs
                     if (!Guid.TryParse(Context.User?.FindFirst(ClaimTypes.NameIdentifier)?
                                                                 .Value, out Guid userId))
                     {
+                        _logger.LogError("Cannot parse user id. OnConnect");
                         throw new Exception("Cannot parse user id. OnConnect");
                     }
                     var user = await _userRepo.GetUserByIdAsync(userId);
@@ -60,9 +62,11 @@ namespace LinkUp_Chat_App.Server.Hubs
                                     finalMessage = message.MessageText;
                                 }
 
-                                await Clients.Caller.SendAsync("ReceiveMessage", 
+                                await Clients.Caller.SendAsync("ReceiveMessage",
+                                                                                chatRoom.Name,
                                                                                 message.User.Username.ToString(),
-                                                                                finalMessage);
+                                                                                finalMessage,
+                                                                                message?.Date ?? DateTime.MinValue);
                             }
                         }
                     }
@@ -71,7 +75,8 @@ namespace LinkUp_Chat_App.Server.Hubs
             }
             else
             {
-                await Clients.Caller.SendAsync("ReceiveMessage", "System", 
+                await Clients.Caller.SendAsync("ReceiveMessage", 
+                                                "System", 
                                                 "You are not authorized.");
             }
             await base.OnConnectedAsync();
@@ -79,29 +84,6 @@ namespace LinkUp_Chat_App.Server.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var username = Context.User?.Identity?.Name;
-            if (!string.IsNullOrEmpty(username))
-            {
-                // Get the user from the repository
-                if (!Guid.TryParse(Context.User?.FindFirst(ClaimTypes.NameIdentifier)?
-                                                            .Value, out Guid userId))
-                {
-                    throw new Exception("Cannot parse user id. OnDisconnect");
-                }
-                var user = await _userRepo.GetUserByIdAsync(userId);
-                if (user != null)
-                {
-                    // Retrieve the user's rooms from the database
-                    var userChatRooms = await _chatRepo.GetUserRoomsAsync(user.Id);
-                    foreach (var chatRoom in userChatRooms)
-                    {
-                        //Notify the chatroom on disconnect
-                        //await Clients.Group(chatRoom.Name)
-                        //    .SendAsync("ReceiveMessage", "System",
-                        //              $"{username} has disconnected.");
-                    }
-                }
-            }
             Console.WriteLine($"Client disconnected: {Context.ConnectionId}");
             if (exception != null)
             {
@@ -154,12 +136,16 @@ namespace LinkUp_Chat_App.Server.Hubs
 
                 // Notify all clients in the room that a user has joined
                 await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
-                await Clients.Group(roomName).SendAsync("ReceiveMessage", "System", 
+                await Clients.Group(roomName).SendAsync("ReceiveMessage", 
+                                                        room.Name,
+                                                        "System", 
                                                         $"{username} has joined the room.");
             }
             else
             {
-                await Clients.Caller.SendAsync("ReceiveMessage", "System", 
+                await Clients.Caller.SendAsync("ReceiveMessage", 
+                                                room.Name, 
+                                                "System", 
                                                 $"{username}, you are already in this room.");
             }
         }
@@ -181,9 +167,39 @@ namespace LinkUp_Chat_App.Server.Hubs
                 {
                     // Retrieve the user's rooms from the database
                     var userChatRooms = await _chatRepo.GetUserRoomsAsync(user.Id);
-                    
-                    //Send all the rooms the user is in to the client
-                    await Clients.Caller.SendAsync("ReceiveRooms", userChatRooms);
+
+                    // Fetch the latest message for each room
+                    var roomsWithLatestMessages = new List<object>();
+                    foreach (var room in userChatRooms)
+                    {
+                        var latestMessage = await _chatRepo.GetLatestMessageAsync(room.Id);
+
+                        string finalMessage = "No messages yet";
+                        if (latestMessage != null)
+                        {
+                            if (IsBase64String(latestMessage.MessageText))
+                            {
+                                // Om meddelandet är krypterat, försök dekryptera det
+                                finalMessage = EncryptionHelper.Decrypt(latestMessage.MessageText);
+                            }
+                            else
+                            {
+                                // Om meddelandet inte är krypterat, använd det som det är
+                                finalMessage = latestMessage.MessageText;
+                            }
+                        }
+
+                        roomsWithLatestMessages.Add(new
+                        {
+                            RoomId = room.Id,
+                            RoomName = room.Name,
+                            LatestMessage = finalMessage,
+                            Timestamp = latestMessage?.Date ?? DateTime.MinValue
+                        });
+                    }
+
+                    // Send the rooms with their latest messages to the client
+                    await Clients.Caller.SendAsync("ReceiveRooms", roomsWithLatestMessages);
                 }
             }
         }
@@ -192,45 +208,56 @@ namespace LinkUp_Chat_App.Server.Hubs
         public async Task LeaveRoom(string roomName)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomName);
-            await Clients.Group(roomName).SendAsync("ReceiveMessage", "System", $"{Context.User?.Identity?.Name ?? "Unknown"} has left the room.");
+            await Clients.Group(roomName).SendAsync("ReceiveMessage",
+                                                    roomName,
+                                                    "System", 
+                                                    $"{Context.User?.Identity?.Name ?? "Unknown"} has left the room.");
         }
 
         public async Task SendMessage(string roomName, string message)
         {
             var encryptedMessage = EncryptionHelper.Encrypt(message);
             var username = Context.User?.Identity?.Name;
-            if (!string.IsNullOrEmpty(username))
+            if (string.IsNullOrEmpty(username))
             {
-                // Get the user from the repository
-                if (!Guid.TryParse(Context.User?.FindFirst(ClaimTypes.NameIdentifier)?
-                                                            .Value, out Guid userId))
-                {
-                    throw new Exception("Cannot parse user id. SendMessage");
-                }
-                var user = await _userRepo.GetUserByIdAsync(userId);
-                
-                if (user != null)
-                {
-                    var room = await _chatRepo.GetRoomByNameAsync(roomName);
-                    if (room != null)
-                    {
-                        var chatMessage = new Message
-                        {
-                            User = user,
-                            MessageText = encryptedMessage,
-                            ChatRoom = room,
-                        };
-
-                        //Save to the database
-                        await _chatRepo.SaveMessageAsync(chatMessage);
-                    }
-                }
+                throw new Exception("User cannot be found");
             }
-            
+            // Get the user from the repository
+            if (!Guid.TryParse(Context.User?.FindFirst(ClaimTypes.NameIdentifier)?
+                                                        .Value, out Guid userId))
+            {
+                throw new Exception("Cannot parse user id. SendMessage");
+            }
+            var user = await _userRepo.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                throw new Exception("User is null");
+            }
+            // GEt the room from the repository
+            var room = await _chatRepo.GetRoomByNameAsync(roomName);
+            if (room == null)
+            {
+                throw new Exception($"{roomName} does not exist");
+            }
+            var chatMessage = new Message
+            {
+                User = user,
+                MessageText = encryptedMessage,
+                ChatRoom = room,
+                Date = DateTime.Now,
+            };
+
+            //Save to the database
+            await _chatRepo.SaveMessageAsync(chatMessage);
             _logger.LogInformation("Received message from user {User}: {Message}", Context.User?.Identity?.Name ?? "Unknown", message);
             Console.WriteLine($"Received message from user {Context.User?.Identity?.Name ?? "Unknown"}: {message} in room: {roomName}");
 
-            await Clients.Group(roomName).SendAsync("ReceiveMessage", Context.User?.Identity?.Name ?? "Unknown", message);
+            await Clients.Group(roomName).SendAsync("ReceiveMessage",
+                                                    room.Name,
+                                                    Context.User?.Identity?.Name ?? "Unknown", 
+                                                    message,
+                                                    chatMessage.Date);
         }
 
         // Check if string is divisible by 4 and that it only conmtains valid Base64 characters

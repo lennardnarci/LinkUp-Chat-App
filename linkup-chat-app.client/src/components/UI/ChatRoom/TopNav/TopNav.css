@@ -58,4 +58,14 @@
 
 .settings-icon {
   margin: 0 auto;
+  cursor: not-allowed;
+}
+
+.add-icon {
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.back-icon {
+  margin: 0 auto;
 }

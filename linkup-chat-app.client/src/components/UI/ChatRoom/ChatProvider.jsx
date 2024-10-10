@@ -5,7 +5,8 @@ const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
   const [connection, setConnection] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [roomMessages, setRoomMessages] = useState({}); // Store messages by room
+  const [currentRoom, setCurrentRoom] = useState(null); // Track the current room
   const [rooms, setRooms] = useState([]);
 
   const token = localStorage.getItem("jwtToken"); // Retrieve the JWT token
@@ -25,14 +26,31 @@ export const ChatProvider = ({ children }) => {
         .withServerTimeout(60000)
         .build();
 
-      newConnection.on("ReceiveMessage", (user, message) => {
-        console.log("Message received from server:", user, message);
-        setMessages((prevMessages) => [...prevMessages, { user, message }]);
-      });
+      newConnection.on(
+        "ReceiveMessage",
+        (roomName, user, message, timestamp) => {
+          console.log(
+            "Message received from server:",
+            roomName,
+            user,
+            message,
+            timestamp
+          );
+          setRoomMessages((prevRoomMessages) => {
+            // Create or update the message list for the room
+            const updatedRoomMessages = { ...prevRoomMessages };
+            if (!updatedRoomMessages[roomName]) {
+              updatedRoomMessages[roomName] = []; // Initialize if empty
+            }
+            updatedRoomMessages[roomName].push({ user, message, timestamp });
+            return updatedRoomMessages;
+          });
+        }
+      );
 
-      newConnection.on("ReceiveRooms", (roomsArray) => {
-        console.log("Rooms received from server:", roomsArray);
-        setRooms(roomsArray);
+      newConnection.on("ReceiveRooms", (roomsWithLatestMessages) => {
+        console.log("Rooms received from server:", roomsWithLatestMessages);
+        setRooms(roomsWithLatestMessages);
       });
 
       await newConnection.start();
@@ -65,6 +83,7 @@ export const ChatProvider = ({ children }) => {
       await connection.invoke("CreateRoom", roomName);
     } catch (error) {
       console.error("Error creating room:", error);
+      throw error;
     }
   };
 
@@ -77,10 +96,21 @@ export const ChatProvider = ({ children }) => {
         await connection.invoke("JoinRoom", roomName);
       } catch (error) {
         console.error("Failed to join room:", error);
+        throw error;
       }
     } else {
-      console.error("Connection is not established or still starting.");
+      const connectionError = new Error(
+        "Connection is not established or still starting."
+      );
+      console.error(connectionError.message);
+      throw connectionError;
     }
+  };
+
+  const switchRoom = (roomName) => {
+    // Change the current room to display the new rooms messages
+    console.log(`Switched room to ${roomName}`);
+    setCurrentRoom(roomName);
   };
 
   const getRooms = async () => {
@@ -99,11 +129,13 @@ export const ChatProvider = ({ children }) => {
   };
 
   const value = {
-    messages,
+    roomMessages,
+    currentRoom,
     rooms,
     sendMessage,
     createRoom,
     joinRoom,
+    switchRoom,
     getRooms,
     connection,
   };
