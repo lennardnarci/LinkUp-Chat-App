@@ -135,4 +135,5 @@ If you haven't set up your database yet, follow these steps:
 
 - Ensure that the backend is running before starting the frontend application.
 - If you encounter any issues, check the console for error messages.
-- Remember to replace the placeholders in the connection strings and `.env` file with your actual database credentials and API URL.
+- Remember to replace the placeholders in the `appsettings.json` and `.env` file with your actual database credentials and neccessary keys.
+- Ensure that the ports for the frontend and backend are correct and change them to the correct ports if needed.
