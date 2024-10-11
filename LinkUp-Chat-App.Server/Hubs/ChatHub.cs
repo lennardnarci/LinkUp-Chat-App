@@ -49,18 +49,18 @@ namespace LinkUp_Chat_App.Server.Hubs
                             var messages = await _chatRepo.GetMessagesAsync(chatRoom);
                             foreach (var message in messages)
                             {
-                                string finalMessage;
+                                string finalMessage = message.MessageText;
 
-                                if (IsBase64String(message.MessageText))
-                                {
-                                    // Om meddelandet är krypterat, försök dekryptera det
-                                    finalMessage = EncryptionHelper.Decrypt(message.MessageText);
-                                }
-                                else
-                                {
-                                    // Om meddelandet inte är krypterat, använd det som det är
-                                    finalMessage = message.MessageText;
-                                }
+                                //if (IsBase64String(message.MessageText))
+                                //{
+                                //    // Om meddelandet är krypterat, försök dekryptera det
+                                //    finalMessage = EncryptionHelper.Decrypt(message.MessageText);
+                                //}
+                                //else
+                                //{
+                                //    // Om meddelandet inte är krypterat, använd det som det är
+                                //    finalMessage = message.MessageText;
+                                //}
 
                                 await Clients.Caller.SendAsync("ReceiveMessage",
                                                                                 chatRoom.Name,
@@ -180,7 +180,8 @@ namespace LinkUp_Chat_App.Server.Hubs
                             if (IsBase64String(latestMessage.MessageText))
                             {
                                 // Om meddelandet är krypterat, försök dekryptera det
-                                finalMessage = EncryptionHelper.Decrypt(latestMessage.MessageText);
+                                //finalMessage = EncryptionHelper.Decrypt(latestMessage.MessageText);
+                                finalMessage = latestMessage.MessageText;
                             }
                             else
                             {
@@ -256,7 +257,7 @@ namespace LinkUp_Chat_App.Server.Hubs
             await Clients.Group(roomName).SendAsync("ReceiveMessage",
                                                     room.Name,
                                                     Context.User?.Identity?.Name ?? "Unknown", 
-                                                    message,
+                                                    chatMessage.MessageText,
                                                     chatMessage.Date);
         }
 

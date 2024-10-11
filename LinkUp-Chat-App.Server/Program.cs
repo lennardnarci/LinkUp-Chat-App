@@ -4,14 +4,16 @@ using LinkUp_Chat_App.Server.Data.Repos;
 using LinkUp_Chat_App.Server.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-// JWT Secret Key
-var key = Encoding.ASCII.GetBytes("JpzrGYGi!9iO@7Iwp59R&jx21MyGNcA$"); //Change this key as it's uploaded to github
 
 var builder = WebApplication.CreateBuilder(args);
+
+// JWT Secret Key
+var jwtSettings = builder.Configuration.GetSection("JWT");
+var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]); 
 
 // Add services to the container.
 
@@ -22,7 +24,7 @@ builder.Services.AddSwaggerGen();
 
 //Add connection to database
 builder.Services.AddDbContext<UsersContext>(
-    options => options.UseSqlServer("Data Source=.;Initial Catalog=LinkUpDB;Integrated Security=True;Trust Server Certificate=True")
+    options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 
