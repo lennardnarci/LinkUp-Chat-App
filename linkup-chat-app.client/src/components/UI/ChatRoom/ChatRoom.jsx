@@ -41,13 +41,8 @@ const ChatRoom = () => {
 
   const handleAddRoom = (bool) => {
     console.log(bool);
-    switchRoom(null);
     setShowJoinCreate(!showJoinCreate);
   };
-
-  /* useEffect(() => {
-    switchRoom(roomName);
-  }, []); */
 
   if (token) {
     try {

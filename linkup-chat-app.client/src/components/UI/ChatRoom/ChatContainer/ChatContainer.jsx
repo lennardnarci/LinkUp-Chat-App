@@ -23,7 +23,13 @@ const ChatContainer = ({ loggedInUsername }) => {
             />
           ))
         ) : (
-          <p>No messages yet</p>
+          <>
+            {currentRoom ? (
+              <p>No messages yet</p>
+            ) : (
+              <p>Select a chatroom and start chatting</p>
+            )}
+          </>
         )}
       </div>
     </div>

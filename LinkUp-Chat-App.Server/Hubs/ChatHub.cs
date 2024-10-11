@@ -217,7 +217,15 @@ namespace LinkUp_Chat_App.Server.Hubs
 
         public async Task SendMessage(string roomName, string message)
         {
-            var encryptedMessage = EncryptionHelper.Encrypt(message);
+            string finalMessage;
+            if(!IsBase64String(message))
+            {
+                finalMessage = EncryptionHelper.Encrypt(message);
+            } else
+            {
+                finalMessage = message;
+            }
+            
             var username = Context.User?.Identity?.Name;
             if (string.IsNullOrEmpty(username))
             {
@@ -244,15 +252,15 @@ namespace LinkUp_Chat_App.Server.Hubs
             var chatMessage = new Message
             {
                 User = user,
-                MessageText = encryptedMessage,
+                MessageText = finalMessage,
                 ChatRoom = room,
                 Date = DateTime.Now,
             };
 
             //Save to the database
             await _chatRepo.SaveMessageAsync(chatMessage);
-            _logger.LogInformation("Received message from user {User}: {Message}", Context.User?.Identity?.Name ?? "Unknown", message);
-            Console.WriteLine($"Received message from user {Context.User?.Identity?.Name ?? "Unknown"}: {message} in room: {roomName}");
+            _logger.LogInformation("Received message from user {User}: {Message}", Context.User?.Identity?.Name ?? "Unknown", finalMessage);
+            Console.WriteLine($"Received message from user {Context.User?.Identity?.Name ?? "Unknown"}: {finalMessage} in room: {roomName}");
 
             await Clients.Group(roomName).SendAsync("ReceiveMessage",
                                                     room.Name,
