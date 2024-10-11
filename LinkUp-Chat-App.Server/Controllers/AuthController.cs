@@ -18,11 +18,13 @@ namespace LinkUp_Chat_App.Server.Controllers
     {
         private readonly IUserRepo _userRepo;
         private readonly IChatRepo _chatRepo;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(IUserRepo userRepo, IChatRepo chatRepo)
+        public AuthController(IUserRepo userRepo, IChatRepo chatRepo, IConfiguration configuration)
         {
             _userRepo = userRepo;
             _chatRepo = chatRepo;
+            _configuration = configuration;
         }
 
         [HttpPost("login")]
@@ -44,7 +46,10 @@ namespace LinkUp_Chat_App.Server.Controllers
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("JpzrGYGi!9iO@7Iwp59R&jx21MyGNcA$");
+
+            // JWT Secret Key
+            var key = Encoding.ASCII.GetBytes(_configuration["JWT:Key"]);
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]

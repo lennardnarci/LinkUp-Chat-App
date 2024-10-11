@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import * as signalR from "@microsoft/signalr";
+import CryptoJS from "crypto-js";
 
 const ChatContext = createContext();
 
@@ -28,14 +29,22 @@ export const ChatProvider = ({ children }) => {
 
       newConnection.on(
         "ReceiveMessage",
-        (roomName, user, message, timestamp) => {
+        (roomName, user, encryptedMessage, timestamp) => {
           console.log(
             "Message received from server:",
             roomName,
             user,
-            message,
+            encryptedMessage,
             timestamp
           );
+
+          //Decrypt the message if it's encrypted
+          const decryptedMessage = decryptMessage(encryptedMessage);
+          console.log(encryptedMessage);
+          console.log(decryptedMessage);
+          const message =
+            decryptedMessage !== "" ? decryptedMessage : encryptedMessage;
+
           setRoomMessages((prevRoomMessages) => {
             // Create or update the message list for the room
             const updatedRoomMessages = { ...prevRoomMessages };
@@ -50,7 +59,17 @@ export const ChatProvider = ({ children }) => {
 
       newConnection.on("ReceiveRooms", (roomsWithLatestMessages) => {
         console.log("Rooms received from server:", roomsWithLatestMessages);
-        setRooms(roomsWithLatestMessages);
+
+        //Decrypt the latest message in each room.
+        const decryptedRooms = roomsWithLatestMessages.map((room) => {
+          const decryptedMessage = decryptMessage(room.latestMessage); // Decrypt the message
+          return {
+            ...room, // Spread the existing room properties
+            latestMessage: decryptedMessage, // Replace with the decrypted message
+          };
+        });
+        console.log(decryptedRooms);
+        setRooms(decryptedRooms);
       });
 
       await newConnection.start();
@@ -67,6 +86,20 @@ export const ChatProvider = ({ children }) => {
       }
     };
   }, []);
+
+  const decryptMessage = (encryptedMessage) => {
+    const encryptedBytes = CryptoJS.enc.Base64.parse(encryptedMessage);
+    const iv = CryptoJS.lib.WordArray.create(encryptedBytes.words.slice(0, 4)); // IV är de första 16 byten
+    const cipherText = CryptoJS.lib.WordArray.create(
+      encryptedBytes.words.slice(4),
+      encryptedBytes.sigBytes - 16
+    );
+    const keyHex = CryptoJS.enc.Utf8.parse(import.meta.env.VITE_ENCRYPTION_KEY);
+    const decrypted = CryptoJS.AES.decrypt({ ciphertext: cipherText }, keyHex, {
+      iv: iv,
+    });
+    return decrypted.toString(CryptoJS.enc.Utf8); // Konverterar tillbaka till klartext
+  };
 
   const sendMessage = async (roomName, message) => {
     if (connection) {
